@@ -1,21 +1,12 @@
-@import url('https://fonts.googleapis.com/css?family=Playfair+Display|Yeon+Sung');
+@import url('https://fonts.googleapis.com/css?family=Playfair+Display|Yeon+Sung|Lobster|Marck+Script');
 @import url('reset.css');
-div.navigation {
-    position: relative;
-    font-family: 'Playfair Display', serif;
-    font-size: 19px;
-    text-align: center;
-    height: 35px;
-    margin: 10px;
-    background-color: azure
+body{
+    background-color: rgba(126, 120, 120, 0.3);
 }
 
-div.navigation a {
-    margin-left: 7px;
-    margin-right: 7px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    text-decoration: none;
+div.head-photo{
+    position: absolute;
+    right: 10px;
 }
 
 div.union-column {
@@ -32,9 +23,14 @@ div.left-column {
     right: 75%;
     width: 25%;
     height: 100%;
+    
 }
 
-div.center-column {
+div.center-column ol{
+    text-align: left;
+}
+
+div.center-column{
     font-family: 'Playfair Display', serif;
     left: 25%;
     right: 25%;
@@ -42,10 +38,23 @@ div.center-column {
     height: 100%;
     flex-direction: column;
     text-align: center;
+    align-items: center;
+}
+
+div.center-column div{
+    
+    text-align: left;
+    flex-direction: column;
+    font-size: 15px;
+    font-family: 'Lobster', cursive;
+}
+
+div.center-column div.author_name p{
+    font-family: 'Marck+Script';
 }
 
 div.right-column {
-/*    left: 75%;*/
+    left: 0px;
     width: 25%;
     height: 100%;
     flex-direction: column;
@@ -54,14 +63,81 @@ div.right-column {
 }
 
 div.banner{
-    width: auto;
-    height: auto;
+    font-family: 'Playfair Display', serif;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    flex-direction: column;
+    align-items: center
 }
 
 div.banner img{
     width: 100%;
     height: 100%;
 }
+
+/* menu */
+ul{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* visual menu*/
+
+.menu a{
+    background: #3d3d3d;
+    color: #fff;
+    padding: 10px;
+    display: block;
+    border-bottom: 1px solid #666;
+    transition: 0.5s all;
+    text-decoration: none;
+}
+
+.navigation{
+   width: 200px;
+   margin: 20px;
+}
+
+.menu a:hover{
+    background: #666;
+    padding: 10px 0 10px 20px;
+}
+
+.menu li:first-child a{
+    border-radius: 10px 3px 3px 3px;
+}
+
+/* submenu */
+
+.menu__list{
+    position: relative;
+}
+
+.menu__drop, .menu__drop2{
+    position: absolute;
+    width: 100%;
+    left: 100%;
+    top: -9999em;
+    opacity: 0;
+    border-left: 10px solid transparent;
+    transition: 0.8s opacity;
+}
+
+
+.menu__list:hover .menu__drop {
+    opacity: 1;
+    top: 0;
+}
+
+.menu__list2:hover .menu__drop2{
+    opacity: 1;
+    top: 90px;
+    z-index: 1000;
+}
+
+/* end menu */
 
 @media print{
     div.union-column{
@@ -70,7 +146,8 @@ div.banner img{
     div.navigation{
         visibility: hidden;
     }
-    div.center-column{
+    
+    div.center-column p{
         visibility: visible;
     }
 }
