@@ -1,0 +1,242 @@
+@import url('https://fonts.googleapis.com/css?family=Playfair+Display|Yeon+Sung');
+@import url('reset.css');
+body {
+	background-color: #05326d;
+	color: white;
+	font-family: 'Yeon Sung', cursive;
+}
+
+/* basic styles for all pages*/
+
+div.union-column {
+	display: flex;
+}
+
+div.union-column div {
+	display: flex;
+	margin: 10px;
+}
+
+div.left-column {
+	right: 75%;
+	width: 25%;
+	height: 100%;
+}
+
+div.center-column {
+	font-family: 'Playfair Display', serif;
+	left: 25%;
+	right: 25%;
+	width: 50%;
+	height: 100%;
+	flex-direction: column;
+	text-align: center;
+	align-items: center;
+	border-left: 0.5px solid #e9e9f0;
+	border-right: 0.5px solid #e9e9f0;
+}
+
+div.right-column {
+	left: 0px;
+	width: 25%;
+	height: 100%;
+	flex-direction: column;
+	align-items: center;
+}
+
+div.banner {
+	font-family: 'Playfair Display', serif;
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	flex-direction: column;
+	align-items: center
+}
+
+div.banner img {
+	width: 100%;
+	height: 100%;
+}
+
+/*end basic styles*/
+
+/* for second task scc styles*/
+
+div.center-column ol {
+	text-align: left;
+}
+
+div.super-force {
+	text-align: left;
+	flex-direction: column;
+	font-size: 15px;
+	/*    font-family: 'Lobster', cursive;*/
+}
+
+div.svg {
+	width: 100%;
+	height: 100%;
+	align-items: stretch;
+}
+
+div.center-column div.author-story {
+	font-family: 'Marck+Script';
+}
+
+/*menu*/
+
+/*top menu*/
+
+.dws-menu * {
+	margin: 0;
+	padding: 0;
+}
+
+.dws-menu ul, .dws-menu ol {
+	list-style: none;
+	background-color: #7972d8;
+}
+
+.dws-menu>ul {
+	display: flex;
+	justify-content: center;
+}
+
+.dws-menu>ul li a {
+	display: block;
+	padding: 15px 30px 15px 40px;
+	font-size: 15px;
+	text-decoration: none;
+	text-transform: uppercase;
+	color: white;
+	transition: all 0.7s ease;
+}
+
+.dws-menu>ul li {
+	position: relative;
+	border-right: 1px solid #603434;
+}
+
+.dws-menu>ul li:first-child {
+	border-left: 1px solid #b2b3b5;
+}
+
+.dws-menu>ul li:last-child {
+	border-right: 1px solid #b2b3b5;
+}
+
+.dws-menu li a:hover {
+	background: #454547;
+	color: #34d0b6;
+	transition: all 0.7s ease;
+}
+
+/*end top menu*/
+
+/*for sub menus*/
+
+.dws-menu li ul {
+	position: absolute;
+	min-width: 150px;
+	display: none;
+}
+
+.dws-menu li>ul li {
+	border-left: 1px solid #b2b3b5;
+	border-right: 1px solid #b2b3b5;
+}
+
+.dws-menu li>ul li a {
+	padding: 10px;
+	text-transform: none;
+	background: #100873;
+	z-index: 1000;
+}
+
+.dws-menu li>ul li ul {
+	position: absolute;
+	right: -150px;
+	top: 0;
+}
+
+.dws-menu li:hover>ul {
+	display: block;
+}
+
+/*end sub menus*/
+
+/* end menu */
+
+@media print {
+	div.union-column {
+		visibility: hidden;
+	}
+	header {
+		visibility: hidden;
+	}
+	div.center-column p {
+		visibility: visible;
+	}
+}
+
+/*end second scc styles*/
+
+/*third task scc styles*/
+
+div.SquareCalc {
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	font-family: 'Playfair Display';
+}
+
+div.SquareCalc p._Title {
+	font-size: 27px;
+	margin-bottom: 5px;
+}
+
+div.SquareCalc form {
+	position: relative;
+}
+
+div.SquareCalc form, input[type="text"] {
+	width: 98%;
+	margin-left: 1%
+}
+
+div.SquareCalc input {
+	height: 25px;
+	font-size: 23px;
+}
+
+div.SquareCalc form input[type="button"] {
+	position: absolute;
+	right: 0;
+	margin-top: 5px;
+	width: auto;
+	height: auto;
+	font-size: 20px;
+}
+
+div.SquareCalc p.FigureSides {
+	padding-top: 5px;
+	padding-left: 3px;
+	padding-bottom: 2px;
+	text-align: left;
+}
+div.center-column hr{
+
+  width: 75%;
+}
+div.DescriptionFigure{
+  flex-direction:  column;
+}
+div.DescriptionFigure p{
+  font-family: 'Times New Roman';
+  font-size: 18px;
+  white-space: pre-wrap;
+  margin-top: 0;
+  text-align: left;
+}
+
+/*end third task styles*/
