@@ -39,7 +39,7 @@
 						<li><a href="#">Current Task</a>
 							<ul>
 								<li><a href="Square.html">Calc Square</a></li>
-<li><a href="Series.html">Sum series</a></li>
+								<li><a href="Series.html">Sum series</a></li>
 
 								<!-- <li><a href="figures.html">Draw SVG</a></li> -->
 							</ul>
@@ -55,30 +55,13 @@
 			<img src="imgs/img1.jpg" width="100%" height="100%">
 		</div>
 		<div class="center-column">
-			<div class="SquareCalc">
-				<p class="_Title">Параллелограм</p>
-				<form id="form">
-					<p class="FigureSides">
-						Длина основания:
-					</p>
-					<input type="text" name="ParWidth"><br>
-					<p class="FigureSides">
-						Длина высоты к основанию:
-					</p>
-					<input type="text" name="ParHeight"><br>
-					<p class="FigureSides">
-						Площадь:
-					</p>
-					<input type="text" name="Result"><br>
-					<input type="button" name="calc" value="Посчитать" onclick="CalculateSquare()">
-				</form>
-			</div>
-			<br>
-			<br>
-			<hr>
-			<div class="DescriptionFigure">
-				<p> Параллелогра́мм (др.-греч. παραλληλόγραμμον от παράλληλος — параллельный и γραμμή — линия) — это четырёхугольник, у которого противоположные стороны попарно параллельны, то есть лежат на параллельных прямых. Частными случаями параллелограмма являются прямоугольник, квадрат и ромб.</p>
-        <img src="imgs/Parallelogram.png" width="100%" height="100%">
+			<div class="Series">
+				<p>Суммирование</p>
+				<p id="desc">Найти значение переменной S описанной ниже:</p>
+				<img src="imgs/SumSeries.png">
+				<input id="independentX" type"text" name="independent" placeholder="Введите X < 1!">
+				<input id="Enter" type="button" name="Enter" value="Посчитать" onclick="SumSer()">
+				<p id="Result">S=</p>
 			</div>
 		</div>
 		<div class="right-column">

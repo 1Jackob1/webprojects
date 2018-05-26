@@ -182,7 +182,7 @@ div.center-column div.author-story {
 /*end second scc styles*/
 
 /*third task scc styles*/
-
+  /* 3.1 */
 div.SquareCalc {
 	flex-direction: column;
 	width: 100%;
@@ -215,7 +215,7 @@ div.SquareCalc form input[type="button"] {
 	margin-top: 5px;
 	width: auto;
 	height: auto;
-	font-size: 20px;
+	fnt-size: 20px;
 }
 
 div.SquareCalc p.FigureSides {
@@ -238,5 +238,44 @@ div.DescriptionFigure p{
   margin-top: 0;
   text-align: left;
 }
+    /*3.1*/
 
+
+    /*3.2*/
+div.Series{
+  position: relative;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+#desc{
+  text-align: left;
+  margin-top: 3px;
+  margin-left: 5px;
+}
+div.Series img{
+  padding: 10px;
+  width: 60%;
+}
+#Result{
+  font-size: 50px;
+}
+
+#independentX{
+  width: 95%;
+  margin-left: 1%;
+  height: 25px;
+  font-size: 23px;
+}
+
+#Enter{
+  position: relative;
+  margin-top: 5px;
+  min-width: 50px;
+  width: 30%;
+  font-size: 16px;
+  height: 25px;
+  left: 60%;
+}
+    /*3.2*/
 /*end third task styles*/
