@@ -1,16 +1,13 @@
-@import url('https://fonts.googleapis.com/css?family=Playfair+Display|Yeon+Sung|Lobster|Marck+Script');
+@import url('https://fonts.googleapis.com/css?family=Playfair+Display|Yeon+Sung|Lobster|Marck+Script|Indie+Flower');
 @import url('reset.css');
 body{
-    background-color: rgba(126, 120, 120, 0.3);
-}
-
-div.head-photo{
-    position: absolute;
-    right: 10px;
+    background-color: #05326d;
+    color: white;
+    font-family: 'Yeon Sung', cursive;
 }
 
 div.union-column {
-    position: absolute;
+/*    position: ;*/
     display: flex;
 }
 
@@ -31,7 +28,7 @@ div.center-column ol{
 }
 
 div.center-column{
-    font-family: 'Playfair Display', serif;
+/*    font-family: 'Playfair Display', serif;*/
     left: 25%;
     right: 25%;
     width: 50%;
@@ -41,15 +38,23 @@ div.center-column{
     align-items: center;
 }
 
-div.center-column div{
+
+
+div.center-column, .super-force{
     
     text-align: left;
     flex-direction: column;
     font-size: 15px;
-    font-family: 'Lobster', cursive;
+/*    font-family: 'Lobster', cursive;*/
 }
 
-div.center-column div.author_name p{
+div.svg{
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
+}
+
+div.center-column div.author-story{
     font-family: 'Marck+Script';
 }
 
@@ -76,74 +81,88 @@ div.banner img{
     height: 100%;
 }
 
-/* menu */
-ul{
+/*menu*/
+  /*top menu*/
+.dws-menu * {
     margin: 0;
     padding: 0;
+}
+
+.dws-menu ul,
+.dws-menu ol {
     list-style: none;
+    background-color: #7972d8;
 }
 
-/* visual menu*/
+.dws-menu > ul {
+    display: flex;
+    justify-content: center;
+}
 
-.menu a{
-    background: #3d3d3d;
-    color: #fff;
-    padding: 10px;
+.dws-menu > ul li a {
     display: block;
-    border-bottom: 1px solid #666;
-    transition: 0.5s all;
+    padding: 15px 30px 15px 40px;
+    font-size: 15px;
     text-decoration: none;
+    text-transform: uppercase;
+    color: white;
+    transition: all 0.7s ease;
 }
 
-.navigation{
-   width: 200px;
-   margin: 20px;
-}
-
-.menu a:hover{
-    background: #666;
-    padding: 10px 0 10px 20px;
-}
-
-.menu li:first-child a{
-    border-radius: 10px 3px 3px 3px;
-}
-
-/* submenu */
-
-.menu__list{
+.dws-menu > ul li {
     position: relative;
+    border-right: 1px solid #603434;
+    
 }
 
-.menu__drop, .menu__drop2{
+.dws-menu >ul li:first-child {
+    border-left: 1px solid #b2b3b5;
+}
+
+.dws-menu > ul li:last-child {
+    border-right: 1px solid #b2b3b5;
+}
+
+.dws-menu li a:hover{
+    background: #454547;
+    color: #34d0b6;
+    transition: all 0.7s ease;
+}
+/*end top menu*/
+
+
+/*for sub menus*/
+.dws-menu li ul{
     position: absolute;
-    width: 100%;
-    left: 100%;
-    top: -9999em;
-    opacity: 0;
-    border-left: 10px solid transparent;
-    transition: 0.8s opacity;
+    min-width: 150px;
+    display: none;
+}
+.dws-menu li> ul li{
+    border-left: 1px solid #b2b3b5;
+    border-right: 1px solid #b2b3b5;
 }
 
-
-.menu__list:hover .menu__drop {
-    opacity: 1;
+.dws-menu li> ul li a{
+    padding: 10px;
+    text-transform: none;
+    background: #100873;
+}
+.dws-menu li>ul li ul{
+    position: absolute;
+    right: -150px;
     top: 0;
 }
-
-.menu__list2:hover .menu__drop2{
-    opacity: 1;
-    top: 90px;
-    z-index: 1000;
+.dws-menu li:hover > ul{
+    display: block;
 }
-
+/*end sub menus*/  
 /* end menu */
 
 @media print{
     div.union-column{
         visibility: hidden;
     }
-    div.navigation{
+    header{
         visibility: hidden;
     }
     
