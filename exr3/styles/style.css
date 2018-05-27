@@ -247,7 +247,7 @@ div.DescriptionFigure p {
 
 /*3.2*/
 
-div.Series, div.Matrix {
+div.Series, div.Matrix, div.FillSnakeDiv {
 	position: relative;
 	flex-direction: column;
 	width: 100%;
@@ -269,18 +269,18 @@ div.Series img {
 	font-size: 50px;
 }
 
-#independentX, #MinNumber, #MaxNumber {
+#independentX, #MinNumber, #MaxNumber, #MinNum, #MaxNum, #Size {
 	width: 95%;
 	margin-left: 1%;
 	height: 25px;
 	font-size: 23px;
 }
 
-#MinNumber, #MaxNumber {
+#MinNumber, #MaxNumber, #MinNum, #MaxNum, #Size {
 	margin-top: 3px;
 }
 
-#Enter {
+#Enter, #Enter2 {
 	position: relative;
 	margin-top: 5px;
 	min-width: 50px;
