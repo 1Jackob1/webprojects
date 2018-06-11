@@ -1,0 +1,623 @@
+<html>
+
+<head>
+    <title>Canvas & Mootools</title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mootools/1.6.0/mootools-core.js"></script>
+    <script type="text/javascript">
+        var canvas, ctx, balls, rects, idTimer, accelerate = 20, test, SizeLimit=50, FiguresLimit=40, prevType, isStop=true,
+            radInc = 0.5,
+            lenInc = 0.5;
+        
+        TBall = new Class({
+            initialize: function(pX, pY) {
+                this.posX = pX; //позиция шарика по X
+                this.posY = pY; //позиция шарика по Y
+                //цвет шарика, формируется случайным оьразом
+                this.colBall = 'rgb(' + Math.floor(Math.random() * 256) + ',' +
+                    Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ')';
+                // радиус шарика, случайное число от 5 до 30
+                this.rBall = 5 + Math.random() * 25;
+                this.directionX = (Math.random() < 0.65) ? -1 : 1;
+                this.directionY = (Math.random() < 0.25) ? -1 : 1;
+                this.correction = Math.random() * 1.5;
+            },
+            posX: 0,
+            posY: 0,
+            colBall: "rgb(0,0,0)",
+            rBall: 0,
+            directionX: 1,
+            directionY: 1,
+            correction: 0,
+            colorBall: function(ctx) {
+                // формируем градиентную заливку для шарика
+                with(this) {
+                    var gradient = ctx.createRadialGradient(posX + rBall / 4,
+                        posY - rBall / 6, rBall / 8, posX, posY, rBall);
+                    gradient.addColorStop(0, '#fff');
+                    gradient.addColorStop(0.85, colBall);
+                    return gradient;
+                }
+            },
+            draw: function(ctx) {
+                // рисуем шарик на canvas
+                with(this) {
+                    ctx.fillStyle = colorBall(ctx);
+                    ctx.beginPath();
+                    ctx.arc(posX, posY, rBall, 0, 2 * Math.PI, false);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+        });
+        TPackMan = new Class({
+            Extends: TBall,
+            initialize: function(X,Y){
+                this.parent(X,Y);
+            },
+            draw: function(ctx){
+                with(this) {
+                    ctx.fillStyle = colorBall(ctx);
+                    ctx.beginPath();
+                    ctx.arc(posX, posY, rBall, Math.PI /4 , 7 * Math.PI / 4, false);
+                    ctx.lineTo(posX, posY);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+        });
+        TRect = new Class({
+            initialize: function(X, Y) {
+                this.len = 5 + Math.random() * 25;
+                this.posX = X - this.len;
+                this.posY = Y - this.len;
+                this.colRect = 'rgb(' + Math.floor(Math.random() * 256) + ',' +
+                    Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ')';
+                this.directionX = (Math.random() < 0.65) ? -1 : 1;
+                this.directionY = (Math.random() < 0.25) ? -1 : 1;
+                this.correction = Math.random() * 1.5;
+            },
+            posX: 0,
+            posY: 0,
+            len: 0,
+            colRect: 'rgb(0,0,0)',
+            directionX: 0,
+            directionY: 0,
+            correction: 0,
+            getColor: function(ctx) {
+                with(this) {
+                    var gradient = ctx.createLinearGradient(posX, posY, posX + len, posY + len);
+                    gradient.addColorStop(0, '#fff');
+                    gradient.addColorStop(0.5, colRect);
+                    return gradient;
+                }
+            },
+            draw: function(ctx) {
+                with(this) {
+                    ctx.fillStyle = getColor(ctx);
+                    ctx.fillRect(posX, posY, len, len);
+                }
+            }
+
+        });
+        TRectBall = new Class({
+            Extends: TRect,
+            initialize: function(X, Y){
+                this.parent(X,Y);
+            },
+            draw: function(ctx){
+                
+                with(this) {
+                    var halfLen=len/2;
+                    ctx.fillStyle = getColor(ctx);
+                    ctx.beginPath();
+                    ctx.strokeRect(posX, posY, len, len);
+                    ctx.arc(posX + len/2, posY + len/2  , len/2, 0, 2 * Math.PI, false );
+                    ctx.fill();
+                    ctx.closePath();
+                    ctx.fillStyle = getColor(ctx);
+                    ctx.beginPath();
+                    ctx.moveTo(posX+halfLen, posY);
+                    ctx.lineTo(posX+halfLen, posY+len);
+                    ctx.lineTo(posX+len, posY+halfLen);
+                    ctx.lineTo(posX, posY+halfLen);
+                    ctx.lineTo(posX+halfLen, posY);
+                    ctx.stroke();
+                    ctx.fill();
+                }
+            } 
+        });
+        
+        function drawBack(ctx, col1, col2, w, h) {
+            // закрашиваем канвас градиентным фоном
+            ctx.save();
+            var g = ctx.createLinearGradient(0, 0, 0, h);
+            g.addColorStop(1, col1);
+            g.addColorStop(0, col2);
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, w, h);
+            ctx.restore();
+        }
+        // инициализация работы
+        function init() {
+            canvas = document.getElementById('canvas');
+            if (canvas.getContext) {
+                ctx = canvas.getContext('2d');
+                //рисуем фон
+                drawBack(ctx, '#202020', '#aaa', canvas.width, canvas.height);
+                //создаем 10 шариков, заноси их в массив и выводим на canvas
+                balls = [];
+                rects = [];
+                for (var i = 1; i <= FiguresLimit; i++) {
+                    var item = new TBall(10 + Math.random() * (canvas.width - 30),
+                        10 + Math.random() * (canvas.height - 30));
+                    item.draw(ctx);
+                    balls.push(item);
+                    
+                    var itemRect = new TRect(10 + Math.random() * (canvas.width - 30),
+                        10 + Math.random() * (canvas.height - 30));
+                    itemRect.draw(ctx);
+                    rects.push(itemRect);
+                    
+                    var itemPackMan = new TPackMan(10 + Math.random() * (canvas.width - 30),
+                        10 + Math.random() * (canvas.height - 30));
+                    itemPackMan.draw(ctx);
+                    balls.push(itemPackMan);
+                    
+                    var itemRectBall = new TRectBall(10 + Math.random() * (canvas.width - 30),
+                        10 + Math.random() * (canvas.height - 30));
+                    itemRectBall.draw(ctx);
+                    rects.push(itemRectBall);
+                }
+                
+            }
+        }
+        // создаем новый шарик по щелчку мыши, добавляем его в массив шариков и рисуем его
+        function goInput(event) {
+            var x = event.clientX + window.pageXOffset;
+            var y = event.clientY + window.pageYOffset;
+            var rand = Math.random();
+            if(rand<0.25){
+                var item = new TBall(x,y);
+                item.draw(ctx);
+                balls.push(item);
+                return;
+            }
+            if(rand>=0.25 && rand<0.5){
+                var item = new TPackMan(x,y);
+                item.draw(ctx);
+                balls.push(item);
+                return;
+            }
+            if(rand>=0.5 && rand<0.75){
+                var item = new TRect(x,y);
+                item.draw(ctx);
+                rects.push(item);
+                return;
+            }
+            
+            var item = new TRectBall(x,y);
+                item.draw(ctx);
+                rects.push(item);
+                return;
+            
+        }
+
+        function Dist(x1, y1, x2, y2) {
+            return Math.sqrt(((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+        }
+
+        function checkIntersectionBall(a, b) {
+            var d = Dist(a.posX, a.posY, b.posX, b.posY);
+            if (d <= (a.rBall + b.rBall))
+                return true;
+            return false;
+        }
+
+        function clearCollisionBall(arr, i) {
+            for (var j = 0; j < arr.length; j++) {
+                if (j == i)
+                    continue;
+                if (checkIntersectionBall(arr[i], arr[j])) {
+//                    console.log("true");    
+                    arr.splice(j, 1);
+                    arr.splice((i < j) ? i : i - 1, 1);
+                    break;
+                }
+            }
+        }
+
+        function checkIntersectionRect(a, b) {
+            var d = Dist(a.posX, a.posY, b.posX, b.posY);
+            var distRect = Dist(a.posX + a.len, a.posY + a.len, a.posX, a.posY);
+            if ((d <= distRect) && (a.posX <= b.posX) && (a.posX + a.len >= b.posX) && (a.posY <= b.posY) && (a.posY + a.len >= b.posY))
+                return true;
+            if ((((a.posY >= b.posY) && (a.posY <= b.posY + b.len)) || ((a.posY + a.len >= b.posY) && (a.posY + a.len <= b.posY + b.len))) && ((a.posX >= b.posX) && (a.posX <= b.posX + b.len) || (a.posX + a.len >= b.posX) && (a.posX + a.len <= b.posX + b.len)))
+                return true;
+            return false;
+        }
+
+        function clearCollisionRect(arr, i) {
+            for (var j = 0; j < arr.length; j++) {
+                if (j == i)
+                    continue;
+                if (checkIntersectionRect(arr[i], arr[j])) {
+                    arr.splice(j, 1);
+                    arr.splice((i < j) ? i : i - 1, 1);
+                    break;
+                }
+            }
+        }
+
+        function checkRectBallIntersec(RectArr, BallArr) {
+//            console.log("gg");
+            for (var i = 0; i < BallArr.length; i++) {
+                for (var j = 0; j < RectArr.length; j++) {
+                    if ((Dist(BallArr[i].posX, BallArr[i].posY, RectArr[j].posX, RectArr[j].posY) <= BallArr[i].rBall) ||
+                        (Dist(BallArr[i].posX, BallArr[i].posY, RectArr[j].posX + RectArr[j].len, RectArr[j].posY) <= BallArr[i].rBall) || 
+                        (Dist(BallArr[i].posX, BallArr[i].posY, RectArr[j].posX, RectArr[j].posY + RectArr[j].len) <= BallArr[i].rBall) || 
+                        (Dist(BallArr[i].posX, BallArr[i].posY, RectArr[j].posX + RectArr[j].len, RectArr[j].posY + RectArr[j].len) <= BallArr[i].rBall) || 
+                        (((Math.abs(BallArr[i].posY - RectArr[j].posY) <= BallArr[i].rBall) &&
+                        (BallArr[i].posX >= RectArr[j].posX && (BallArr[i].posX <= RectArr[j].posX + RectArr[j].len)))||
+                        (((Math.abs(BallArr[i].posX - RectArr[j].posX) <= BallArr[i].rBall) &&
+                        (BallArr[i].posY >= RectArr[j].posY && (BallArr[i].posY <= RectArr[j].posY + RectArr[j].len)))))){
+                        
+                        RectArr.splice(j,1);
+                        j--;
+                        BallArr.splice(i,1);
+                        i--;
+                        if(i<0)
+                            i=0;
+                        if(BallArr.lenght <=0){
+                            i=1000;
+                            j=RectArr.lenght+1000;
+                        }
+                    }
+                }
+            }
+            
+        }
+
+        function reDraw(arr) {
+            for (var i = 0; i < arr.length; i++) {
+                arr[i].draw(ctx);
+            }
+        }
+        /*------------------CIRCLE--------------------------*/
+        function moveBallRandom() {
+            //реализация движения шариков, находящихся в массиве balls
+            drawBack(ctx, '#202020', '#aaa', canvas.width, canvas.height);
+            reDraw(rects);
+            for (var i = 0; i < balls.length; i++) {
+
+                if (balls[i].rBall + radInc >= SizeLimit) {
+                    balls.splice(i, 1);
+                    i--;
+                    continue;
+                }
+
+                balls[i].rBall += radInc;
+                balls[i].posX = balls[i].posX + ((Math.random() + 1) + radInc + balls[i].correction) * balls[i].directionX;
+                balls[i].posY = balls[i].posY + ((Math.random() + 1) + radInc + balls[i].correction) * balls[i].directionY;
+
+                balls[i].draw(ctx);
+
+                if (balls[i].posX + balls[i].rBall >= canvas.width) {
+                    balls[i].directionX *= (-1);
+                    balls[i].posX -= balls[i].posX + balls[i].rBall - canvas.width;
+                }
+                if (balls[i].posX - balls[i].rBall <= 0) {
+                    balls[i].directionX *= (-1);
+                    balls[i].posX += balls[i].rBall - balls[i].posX;
+                }
+                if (balls[i].posY + balls[i].rBall >= canvas.height) {
+                    balls[i].directionY *= (-1);
+                    balls[i].posY -= balls[i].posY + balls[i].rBall - canvas.height;
+                }
+                if (balls[i].posY - balls[i].rBall <= 0) {
+                    balls[i].directionY *= (-1);
+                    balls[i].posY += balls[i].rBall - balls[i].posY;
+                }
+
+                clearCollisionBall(balls, i);
+
+            }
+            
+            
+        }
+
+        function moveBallUpStairs() {
+            drawBack(ctx, '#202020', '#aaa', canvas.width, canvas.height);
+            reDraw(rects);
+            for (var i = 0; i < balls.length; i++) {
+
+                if (balls[i].rBall + radInc >= SizeLimit) {
+                    balls.splice(i, 1);
+                    i--;
+                    continue;
+                }
+
+                balls[i].rBall += radInc;
+                balls[i].posY -= ((Math.random() + 1) + radInc + balls[i].correction);
+
+                balls[i].draw(ctx);
+                if (balls[i].posY <= 0)
+                    balls[i].posY = canvas.height;
+
+                clearCollisionBall(balls, i);
+            }
+        }
+
+        function moveBallLeft() {
+            drawBack(ctx, '#202020', '#aaa', canvas.width, canvas.height);
+            reDraw(rects);
+            for (var i = 0; i < balls.length; i++) {
+
+                if (balls[i].rBall + radInc >= SizeLimit) {
+                    balls.splice(i, 1);
+                    i--;
+                    continue;
+                }
+
+                balls[i].rBall += radInc;
+                balls[i].posX -= ((Math.random() + 1) + radInc + balls[i].correction);
+
+                balls[i].draw(ctx);
+                reDraw(rects);
+                if (balls[i].posX <= 0)
+                    balls[i].posX = canvas.width;
+                clearCollisionBall(balls, i);
+            }
+        }
+
+        function moveBallRight() {
+            drawBack(ctx, '#202020', '#aaa', canvas.width, canvas.height);
+            reDraw(rects);
+            for (var i = 0; i < balls.length; i++) {
+
+                if (balls[i].rBall + radInc >= SizeLimit) {
+                    balls.splice(i, 1);
+                    i--;
+                    continue;
+                }
+
+                balls[i].rBall += radInc;
+                balls[i].posX += ((Math.random() + 1) + radInc + balls[i].correction);
+
+                balls[i].draw(ctx);
+
+                if (balls[i].posX >= canvas.width)
+                    balls[i].posX = 0;
+
+
+                clearCollisionBall(balls, i);
+
+            }
+        }
+
+        function moveBallDown() {
+            drawBack(ctx, '#202020', '#aaa', canvas.width, canvas.height);
+            reDraw(rects);
+            for (var i = 0; i < balls.length; i++) {
+
+                if (balls[i].rBall + radInc >= SizeLimit) {
+                    balls.splice(i, 1);
+                    i--;
+                    continue;
+                }
+
+                balls[i].rBall += radInc;
+                balls[i].posY += ((Math.random() + 1) + radInc + balls[i].correction);
+
+                balls[i].draw(ctx);
+
+                if (balls[i].posY >= canvas.height)
+                    balls[i].posY = 0;
+
+
+                clearCollisionBall(balls, i);
+
+            }
+        }
+        /*-----------------RECTANGLE------------------------------*/
+        function moveRectRandom() {
+            drawBack(ctx, '#202020', '#aaa', canvas.width, canvas.height);
+            for (var i = 0; i < rects.length; i++) {
+                if (rects[i].len + lenInc >= SizeLimit) {
+                    rects.splice(i, 1);
+                    i--;
+
+                    continue;
+                    //                    lenInc = 0;
+                }
+                //                console.log(rects[i].len);
+                rects[i].len += lenInc;
+                var shift = Math.random() + 1;
+                rects[i].posX = rects[i].posX + (shift + rects[i].correction + lenInc) * rects[i].directionX;
+                rects[i].posY = rects[i].posY + (shift + rects[i].correction + lenInc) * rects[i].directionY;
+
+                rects[i].draw(ctx);
+//                reDraw(rects);
+                if (rects[i].posX + rects[i].len >= canvas.width) {
+                    rects[i].directionX *= (-1);
+                    rects[i].posX -= rects[i].posX + rects[i].len - canvas.width;
+                }
+                if (rects[i].posX <= 0) {
+                    rects[i].directionX *= (-1);
+                    rects[i].posX += 1;
+                }
+                if (rects[i].posY + rects[i].len >= canvas.height) {
+                    rects[i].directionY *= (-1);
+                    rects[i].posY -= rects[i].posY + rects[i].len - canvas.height;
+                }
+                if (rects[i].posY <= 0) {
+                    rects[i].directionY *= (-1);
+                    rects[i].posY += 1;
+                }
+
+                clearCollisionRect(rects, i);
+            }
+
+        }
+
+        function moveRectUpStairs() {
+            drawBack(ctx, '#202020', '#aaa', canvas.width, canvas.height);
+            for (var i = 0; i < rects.length; i++) {
+
+                if (rects[i].len + radInc >= SizeLimit) {
+                    rects.splice(i, 1);
+                    i--;
+                    continue;
+                }
+
+                rects[i].len += radInc;
+                rects[i].posY -= ((Math.random() + 1) + lenInc + rects[i].correction);
+
+                rects[i].draw(ctx);
+
+                if (rects[i].posY <= 0)
+                    rects[i].posY = canvas.height;
+
+                clearCollisionRect(rects, i);
+            }
+        }
+
+        function moveRectLeft() {
+            drawBack(ctx, '#202020', '#aaa', canvas.width, canvas.height);
+            for (var i = 0; i < rects.length; i++) {
+
+                if (rects[i].len + radInc >= SizeLimit) {
+                    rects.splice(i, 1);
+                    i--;
+                    continue;
+                }
+
+                rects[i].len += radInc;
+                rects[i].posX -= ((Math.random() + 1) + radInc + rects[i].correction);
+
+                rects[i].draw(ctx);
+
+                if (rects[i].posX <= 0)
+                    rects[i].posX = canvas.width;
+
+                clearCollisionRect(rects, i);
+            }
+        }
+
+        function moveRectRight() {
+            drawBack(ctx, '#202020', '#aaa', canvas.width, canvas.height);
+            for (var i = 0; i < rects.length; i++) {
+
+                if (rects[i].len + radInc >= SizeLimit) {
+                    rects.splice(i, 1);
+                    i--;
+                    continue;
+                }
+
+                rects[i].len += radInc;
+                rects[i].posX += ((Math.random() + 1) + radInc + rects[i].correction);
+
+                rects[i].draw(ctx);
+
+                if (rects[i].posX >= canvas.width)
+                    rects[i].posX = 0;
+                clearCollisionRect(rects, i);
+            }
+
+
+        }
+
+        function moveRectDown() {
+            drawBack(ctx, '#202020', '#aaa', canvas.width, canvas.height);
+            for (var i = 0; i < rects.length; i++) {
+
+                if (rects[i].len + radInc >= SizeLimit) {
+                    rects.splice(i, 1);
+                    i--;
+                    continue;
+                }
+
+                rects[i].len += radInc;
+                rects[i].posY += ((Math.random() + 1) + radInc + rects[i].correction);
+
+                rects[i].draw(ctx);
+
+                if (rects[i].posY >= canvas.height)
+                    rects[i].posY = 0;
+
+                clearCollisionRect(rects, i);
+            }
+        }
+
+        function move(type) {
+            isStop = false;
+            prevType = type;
+            clearInterval(idTimer);
+            switch (type) {
+                case 1:
+                    idTimer = setInterval('moveRectRandom(); moveBallRandom(); checkRectBallIntersec(rects, balls);', accelerate);
+                    break;
+                case 2:
+                    idTimer = setInterval('moveRectUpStairs(); moveBallUpStairs(); checkRectBallIntersec(rects, balls);', accelerate);
+                    break;
+                case 3:
+                    idTimer = setInterval('moveRectLeft(); moveBallLeft(); checkRectBallIntersec(rects, balls);', accelerate);
+                    break;
+                case 4:
+                    idTimer = setInterval('moveRectRight(); moveBallRight(); checkRectBallIntersec(rects, balls);', accelerate);
+                    break;
+                case 5:
+                    idTimer = setInterval('moveRectDown(); moveBallDown(); checkRectBallIntersec(rects, balls);', accelerate);
+                    break;
+            }
+
+
+
+        }
+
+        function changeSpeedLimit(){
+            var tmp=document.id('SpeedCorrect');
+//            console.log(tmp.value);
+            accelerate = tmp.value;
+            move(prevType);
+        }
+        
+        function changeSizeLimit(){
+            var tmp=document.id('SizeCorrect');
+            SizeLimit = tmp.value;
+        }
+        
+        function changeFiguresLimit(){
+            var tmp=document.id('FiguresCorrect');
+            FiguresLimit = tmp.value;
+        }
+    </script>
+    <style type="text/css">
+        canvas {
+            border: 1px solid blue;
+        }
+
+    </style>
+</head>
+
+<body onload="init();">
+    <canvas id="canvas" width="1300" height="600" onclick="goInput(event);">
+	</canvas>
+    <form>
+        <input type="button" value="Рандом" onclick="move(1)">
+        <input type="button" value="Вверх" onclick="move(2)">
+        <input type="button" value="Влево" onclick="move(3)">
+        <input type="button" value="Вправо" onclick="move(4)">
+        <input type="button" value="Вниз" onclick="move(5)">
+        <input type="button" value="Снова" onclick="init()">
+        <input type="button" value="Стоп" onclick="clearInterval(idTimer); isStop = true;">
+        <p>Регулировка скорости</p>
+        <input id="SpeedCorrect" type="number" onchange="changeSpeedLimit()">
+        <p>Максимальный размер</p>
+        <input id="SizeCorrect" type="number" onchange="changeSizeLimit()">
+        <p>Количество фигур при генерации</p>
+        <input id="FiguresCorrect" type="number" onchange="changeFiguresLimit()">
+    </form>
+</body>
+
+</html>
